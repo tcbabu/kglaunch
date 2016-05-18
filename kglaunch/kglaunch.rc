@@ -1,0 +1,121 @@
+D      //GUI dimensions xo,yo,xl,yl,lw,rw,tw,bw,df,bor_type,bkup
+390 148 640 454
+4 4 4 4
+0 0 1 1 1 0 0 0 0 0 1 1 1.000000 0 100 100 0
+//Button Box
+n
+n     //code
+9 11  //x1,y1
+627 445  //x2,y2
+50 70  //xgap,ygap
+72 //length 
+72 //Width 
+5 3  //Nx,Ny,
+1 //status
+"Firefox" //title 
+/usr/share/icons/mozicon128.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-221221221 //back ground color
+ //keyboard code
+1 //status
+"kgMplayer" //title 
+/usr/share/icons/CratOS_lion-icons/apps/scalable2/noise.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"kgCalc" //title 
+/usr/share/icons/CratOS_lion-icons/apps/scalable/calc.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"kgView" //title 
+/usr/share/icons/CratOS_lion-icons/apps/scalable/gdmphotosetup.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"Configlina" //title 
+/usr/share/icons/CratOS_lion-icons/apps/scalable/xscreensaver.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"SetLinaPhoto" //title 
+/usr/share/icons/personal.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"Terminal" //title 
+/usr/share/icons/CratOS_lion-icons/apps/scalable/Terminal.png // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+1 //status
+"" //title 
+NULL // XPM 
+NULL // XPM 
+NULL // XPM 
+-1 //back ground color
+ //keyboard code
+0 0.150000 0  //type,fac
+0 0 //hide
+"kglaunchWidget1"

@@ -1,0 +1,13 @@
+int  importbrowser1callback(int item,int i,void *Tmp) ;
+void  importbrowser1init(DIY *Y,void *pt) ;
+int  importbrowser2callback(int item,int i,void *Tmp) ;
+void  importbrowser2init(DIY *Y,void *pt) ;
+int  importsplbutton1callback(int butno,int i,void *Tmp) ;
+void  importsplbutton1init(DIL *B,void *pt) ;
+int  importsplbutton2callback(int butno,int i,void *Tmp) ;
+void  importsplbutton2init(DIL *B,void *pt) ;
+int importinit(void *Tmp) ;
+int importcleanup(void *Tmp) ;
+int importCallBack(void *Tmp,void *tmp) ;
+int importResizeCallBack(void *Tmp) ;
+int importWaitCallBack(void *Tmp) ;

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Kulina Hotspots
+Comment=Kulina Hotspots
+Exec=hotspot
+Icon=/usr/share/kglaunch/hotspot.png
+Terminal=false
+Type=Application
+Categories=Settings;System;
+StartupNotify=true

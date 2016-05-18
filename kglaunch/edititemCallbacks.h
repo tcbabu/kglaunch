@@ -1,0 +1,14 @@
+int  edititemtextbox1callback(int cellno,int i,void *Tmp);
+int  edititembutton1callback(int butno,int i,void *Tmp) ;
+void  edititembutton1init(DIN *B,void *pt) ;
+int  edititemtextbox2callback(int cellno,int i,void *Tmp);
+int  edititemtextbox3callback(int cellno,int i,void *Tmp);
+int  edititembutton2callback(int butno,int i,void *Tmp) ;
+void  edititembutton2init(DIN *B,void *pt) ;
+int  edititemsplbutton1callback(int butno,int i,void *Tmp) ;
+void  edititemsplbutton1init(DIL *B,void *pt) ;
+int edititeminit(void *Tmp) ;
+int edititemcleanup(void *Tmp) ;
+int edititemCallBack(void *Tmp,void *tmp) ;
+int edititemResizeCallBack(void *Tmp) ;
+int edititemWaitCallBack(void *Tmp) ;

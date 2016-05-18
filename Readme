@@ -1,0 +1,18 @@
+'Kglaunch' is an application launcher from 'Kulina Graphics'
+(www.facebook.com/kulinagraphics , https://www.sourceforge.net/u/tcbabu).
+It is basically a fun application, if you are interested in a clean
+desktop, probably you may find it interesting. However, if you are a 
+'GNOME' user, then 'kglaunch' may not be of much interest to you.
+For others, it may have some fun. You can keep your desktop clean and
+panel hidden and include 'kglaunch' in the start up programs.
+If you prefer a really clean desktop, you can use, 'hotspot' (part of
+kglaunch ) as your start up program instead of 'kglaunch'. It will 
+provide two hotspots in the desktop;
+1. In the center of the screen, a mouse click there will bring up
+   'kglaunch'
+2. Top left corner, which will bring up 'firefox' (if you have
+   installed firefox browser).
+
+I have personally kept 'kgclock' (https://www.sourceforge.net/u/tcbabu)
+also in the start up, I like the clock on the desktop (it will alert me
+my medicine time).

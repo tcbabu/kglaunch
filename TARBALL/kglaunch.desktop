@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Kulina Launcher
+Comment=Kulina Launcher
+Exec=kglaunch
+Icon=/usr/share/kglaunch/kglaunch.png
+Terminal=false
+Type=Application
+Categories=Settings;System;
+StartupNotify=true

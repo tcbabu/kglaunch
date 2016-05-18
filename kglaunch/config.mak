@@ -1,0 +1,2 @@
+KULINA=/usr
+PREFIX=/usr
