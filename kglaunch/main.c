@@ -1,18 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <libgen.h>
 #include<string.h>
 void *Runkglaunch(void *);
+
+int CheckProcessDisplay(char *curdsp,int pid) {
+  int pp;
+  char name[3000];
+  char *pt;
+  int ret=0,count,i;
+  sprintf(name,"/proc/%-d/environ",pid);
+  pp = open(name ,O_RDONLY);  
+  if(pp < 0) return ret;
+  while(( count=read(pp,name,2900)) >0) {
+     i=0; while(i< count) {
+       if((name[i]< ' ') ) name[i]=' ';
+       i++;
+     }
+     name[count]='\n';
+     name[count+1]='\0';
+
+     pt =strstr(name,"DISPLAY=");
+     if(pt == NULL ) continue;
+//     printf("GOT: %s\n",pt);
+     pt +=8;
+     count= strlen(curdsp);
+     strncpy(name,pt,count);
+     name[count]='\0';
+     if (strcmp(curdsp,name)==0) ret = 1;
+     break;
+  }
+  close(pp);
+  
+  return ret;
+ 
+}
 int KillOtherJobs(char *name) {
    char buff[300];
    int Id=0,Okay=0,Pid,ln,i;
    char tty[50],dummy[50],program[100];
    FILE *pp;
    char *pt;
+   char *env;
    ln =strlen(name);
    while(name[ln]<=' ')name[ln--]='\0';
    while((ln>=0)&&(name[ln]!='/')) ln--;
    pt=name+ln+1;
    Pid = getpid();
+   env = getenv("DISPLAY");
+//   printf("DISPLAY=%s\n",env);
    while(!Okay) {
      pp = popen("ps -e","r");
      if(pp==NULL) return 0;
@@ -24,8 +61,11 @@ int KillOtherJobs(char *name) {
         if(strcmp(pt,program)==0) {
              if(Id==Pid) continue;
 #if 1
-             kill(Id,9);
-             Okay =0;
+             if( CheckProcessDisplay(env,Id)) {
+//               printf("Killing : %d\n",Id);
+               kill(Id,9);
+               Okay =0;
+             }
 #else
              exit(0);
 #endif
@@ -37,7 +77,7 @@ int KillOtherJobs(char *name) {
 }
 int main(int argc,char **argv) {  
   if( getenv("HOME") != NULL) chdir(getenv("HOME"));
-  KillOtherJobs(argv[0]);
+  KillOtherJobs(basename(argv[0]));
   Runkglaunch(NULL);
   return 1;
 }

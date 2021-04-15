@@ -129,17 +129,6 @@ typedef struct dia_msg_str {
       void *D;
       void *Bimg;
 } DIM;
-typedef struct txt_item {
-     int x1;
-     int y1;
-     int x2;
-     int y2;
-     char pr[MAXTPRMTLN];
-     char df[MAXTITEMLN];
-     int sw;
-     int cursor;
-     int startchar;
-} T_item;
 typedef struct t_elmt {
      char *fmt;void *v ;int sw;
      int noecho;
@@ -153,6 +142,7 @@ typedef struct t_elmt {
      int cursor;
      int startchar;
      int ln;
+     int hlt,hxs,hxe; // if hlt!= 0 highlight hxs to hxe
 } T_ELMT;
 typedef struct tbl_elmt { 
      char *fmt;void *v ;int sw;
@@ -167,6 +157,7 @@ typedef struct tbl_elmt {
      int cursor;
      int startchar;
      int ln;
+     int hlt,hxs,hxe; // if hlt!= 0 highlight hxs to hxe
 } TBL_ELMT;
 typedef struct dai_tx_box {
       char code;     /* use 't' for text box and 'T' for table box*/
@@ -944,6 +935,7 @@ int  kgMoveGrp(void *Tmp,int grpid,int x1,int y1);
 int  kgShiftGrp(void *Tmp,int grpid,int xs,int ys);
 int  kgResizeGrp(void *Tmp,int grpid,int xl,int yl);
 int  kgMoveWidget(void *Tmp,int item,int x1,int y1);
+int  kgShiftWidget(void *Tmp,int item,int xsh,int ysh);
 int  kgResizeWidget(void *Tmp,int item,int xl,int yl);
 void *kgGetWidget(void *Tmp,int id);
 void * kgGetNamedWidget(void *Tmp,char *name);
@@ -1025,6 +1017,8 @@ int  kgExtractBaseName (char *flname,char *basename) ;
 void kgCleanBackground(void *D,int xo,int yo,int width,int height,float transparency) ;
 void kgUpdateOn(void *D);
 void kgUpdateOff(void *D);
+int kgCheckAttention(void *D);
+int kgMovePointer(void *Tmp,int x,int y);
 void kgRaiseWindow(void *D);
 void kgLowerWindow(void *D);
 void kgMoveWindow(void *tmp,int x,int y);
@@ -1095,6 +1089,7 @@ int kgEnter(KBEVENT kb);
 
 int kgSendKeyEvent(void *Tmp,int ch) ;
 int kgSendEscapeKeyEvent(void *Tmp) ;
+int kgSendClearKeyEvent(void *Tmp);
 int kgSendTabKeyEvent(void *Tmp) ;
 int kgSendSpaceKeyEvent(void *Tmp) ;
 int kgSendDeleteKeyEvent(void *Tmp) ;
@@ -1114,6 +1109,8 @@ int kgSendLinefeedKeyEvent(void *Tmp) ;
   Image related Calls
 */
 void *kgGetImageCopy(void *D,void *img);
+void *kgGetProcessedImage(void *timg,int Bsize,float rfac,
+                         int Btred,int Btgreen,int Btblue);
 void kgImage(void *Dtmp,void *tmp,int x0,int y0,int width,int height,float transparency,float highfac);
 void *kgGetImage(char *flname);
 void *kgGetInlineImage(char *encode,int length);
@@ -1142,6 +1139,7 @@ void *kgCopyImage(void *img);
 void *kgCleanImage(void *img);
 void *kgFlipImage(void *img); // About X refledction overwrites img
 void *kgFlopImage(void *img); // About Y refledction overwrites img
+int   kgImagetoC(char *flname);
 void *kgBorderedRectangle(int w, int h,int clr,float rfac);
 void *kgPressedRectangle(int width,int height,int fillclr,float rfac);
 void kgGphtoImagefile(char *Imagefile,char *gphfile,int xsize,int ysize,unsigned long bkcolor) ;
@@ -1322,6 +1320,9 @@ void *kgFreeDouble(void **mem);
 void kgCleanDir(char *folder);
 void kgCheckAndRemoveParent(char *dir);
 char *kgWhich(char *pgr);
+int kgSearchString(char *s1,char *s2);
+char *kgGetIcon(char *pgr,char *theme);
+void *kgSearchIcon(char *IconName);
 char *kgMakeTmpDir(void);
 char **kgFontNames(void);
 char **kgFileMenu( char *dir,char *filter);
@@ -1500,6 +1501,18 @@ void *OpenThreads(int thds);
 void DoInAnyThread(void *,void *(*threadFunc)(void *),void *arg);
 void WaitThreads(void *);
 void CloseThreads(void *);
+// Clipboard routines
+unsigned char *kgGetPrimary(void * Tmp);
+unsigned char *kgGetClipBoard(void * Tmp);
+int kgSetPrimary(void * Tmp,unsigned char *data);
+int kgSetClipBoard(void * Tmp,unsigned char *data);
+void * kgProcessClips(void *Tmp,void *kbtmp);
+int kgEnableSelection(void *Tmp);
+int kgDisableSelection(void *Tmp);
+int kgClearHighlight(void *Tmp);
+int kgCheckSelection(void *Tmp);
+int kgSetClipbordCallback(void *Tmp,int *(cpCallback)(int,void *));
+int kgSetClipMenu(void *Tmp,char **menu);
 #ifdef __cplusplus
 }
 #endif

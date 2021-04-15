@@ -213,6 +213,7 @@ void *GetButtons(void) {
   BUTACTION *bt;
   FILE *fp;
   int i,j,Color,Bcount,dir=1;
+  float rfac=-1.0;
   BUT_STR  *butn0=NULL; 
   Nxmax =(Xres-20)/(Bsize+Xgap);
   Nymax =(Yres-20)/(Bsize+Ygap);
@@ -277,6 +278,7 @@ void *GetButtons(void) {
     if(i==Nb) break;
     butn0[i].sw=1;
     if(Ygap>10) strcpy(butn0[i].title,bt->Name);
+#if 0
     butn0[i].xpmn= (char *)malloc(502); 
     if(bt->Icon[0]!='\0') {
       strcpy(butn0[i].xpmn,"##");
@@ -287,6 +289,28 @@ void *GetButtons(void) {
        img=GetProcessedImage(butn0[i].xpmn);
        butn0[i].xpmn = (char *)img;
     }
+#else
+  switch(IconShape) {
+     case 1:
+       rfac = 0.2;
+     break;
+     case 2:
+       rfac = 0.5;
+     break;
+     case 3:
+       rfac = 0.0;
+     break;
+  }
+  if(bt->Icon[0]!='\0') {
+      strcpy(buff,"##");
+      strcat(buff,bt->Icon);
+      img=kgGetProcessedImage(buff,Bsize,rfac,Btred,Btgreen,Btblue);
+  }
+  else {
+      img=kgGetProcessedImage(&default_str,Bsize,rfac,Btred,Btgreen,Btblue);
+  }
+  butn0[i].xpmn = (char *)img;
+#endif
     i++;
   }
   fclose(fp);
@@ -476,7 +500,7 @@ void *Runkglaunch(void *arg) {
    int pid;
    void **v=NULL;
    void *pt=NULL; /* pointer to send any extra information */
-//   daemon(0,0);
+   daemon(0,0);
    kgDisplaySize(&Xres,&Yres); 
     while(Restart) {
         ReadConfig();

@@ -9,6 +9,7 @@ mkdir -p /usr/share/kglaunch
 install -m 644 -s kglaunch.png /usr/share/kglaunch/kglaunch.png
 install -m 644 -s kglaunch.desktop /usr/share/applications
 install -m 644 -s kglogout.png /usr/share/kglaunch/kglogout.png
+install -m 644 -s kglogout.png /usr/share/icons/red_light.png
 install -m 644 -s kglogout.desktop /usr/share/applications
 install -m 644 -s hotspot.png /usr/share/kglaunch/hotspot.png
 install -m 644 -s hotspot.desktop /usr/share/applications

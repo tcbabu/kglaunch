@@ -11,6 +11,10 @@ int main(void) {
         Runhotspot(0);
         return 1;
       }
+      if(fork()==0) {
+        Runhotspot(8);
+        return 1;
+      }
 #if 0
       if(fork()==0) {
         Runhotspot(2);
