@@ -78,6 +78,9 @@ int KillOtherJobs(char *name) {
 int main(int argc,char **argv) {  
   if( getenv("HOME") != NULL) chdir(getenv("HOME"));
   KillOtherJobs(basename(argv[0]));
+  if(argc > 1){
+   if (strcmp(argv[1],"-d") ==0 ) daemon(0,0);
+  }
   Runkglaunch(NULL);
   return 1;
 }

@@ -500,7 +500,6 @@ void *Runkglaunch(void *arg) {
    int pid;
    void **v=NULL;
    void *pt=NULL; /* pointer to send any extra information */
-   daemon(0,0);
    kgDisplaySize(&Xres,&Yres); 
     while(Restart) {
         ReadConfig();

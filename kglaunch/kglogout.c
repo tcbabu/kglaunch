@@ -93,7 +93,7 @@ int HangupXserver(char *name) {
         if(strcmp(pt,program)==0) {
 #if 1
              kill(Id,SIGHUP);
-             Okay =0;
+             Okay =1;
 #else
              exit(0);
 #endif
@@ -141,11 +141,15 @@ int main(int argc,char **argv) {
     changejob("kgLogout");
   }
   else {
-    strcpy(buf,"Xorg");
-    HangupXserver(buf);
-    strcpy(buf,"X");
-    HangupXserver(buf);
+    if( strcmp(getenv("DISPLAY"),":0.0") ==0 ) {
+      strcpy(buf,"Xorg");
+      if(HangupXserver(buf)== 0) {
+        strcpy(buf,"X");
+        HangupXserver(buf);
+      }
+    }
   }
+  
   return 1;
 
 }
