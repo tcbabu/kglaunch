@@ -5,6 +5,51 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <kulina.h>
+int killxvnc(char *env) {
+  FILE *pf;
+  char buff[200],dummy[50],sock[100];
+  int ret=0,pid;
+  int display,mydsp;
+  char *pt;
+  pt = strstr(env,":");
+  pt++;
+  strcpy(buff,pt);
+  pt=strstr(buff,".");
+  pt[0]=' ';
+  sscanf(buff,"%d",&mydsp);
+  pf = popen("ps -ef","r");
+  while( fgets(buff,199,pf) != NULL) {
+     if(strstr(buff,"Xvnc") == NULL ) continue;
+     pt = strstr(buff,"unixpath=");
+     if(pt == NULL ) continue;
+     pt += 9;
+//     printf("%s\n",pt);
+//     printf("%s\n",sock);
+     if(pt == NULL ) continue;
+     sscanf(pt,"%s",sock);
+     sscanf(buff,"%s%d",dummy,&pid);
+     
+     pt = strchr(sock,'.');
+     strncpy(dummy,pt+1,40);
+     pt = strchr(dummy,'.');
+     pt[0]= ' ';
+     sscanf(dummy,"%d",&display);
+     if(mydsp==display) {
+      if(kill(pid,9)) { 
+        sprintf(dummy,"/tmp/X%-d-lock",display);
+        remove(dummy);
+        sprintf(dummy,"/tmp/X11d-unix/X%-d",display);
+        remove(dummy);
+        strcpy(dummy,sock);
+        dummy[5]='.';dummy[6]='L';dummy[7]='K';
+        remove(dummy);
+      }
+     }
+     ret=1;
+  }
+  return ret;
+}
+
 int CheckString(char *s1,char *s2) {
    int ch,ln,ret=0;
    ln = strlen(s2);
@@ -124,7 +169,11 @@ int CheckProcess(char *procname) {
    return Okay;
 }
 int main(int argc,char **argv) {  
-  char buf[200];
+  char buf[200],*env=NULL;
+  env = getenv("DISPLAY"); 
+  if( strcmp(env,":0.0") !=0 ) {
+    killxvnc(env);
+  }
   if(SearchString(argv[0],"kglogout")>=0) {
     if(CheckProcess("startkde")) {
        changejob("kdeinit4_shutdown");
@@ -140,14 +189,12 @@ int main(int argc,char **argv) {
     }
     changejob("kgLogout");
   }
-  else {
-    if( strcmp(getenv("DISPLAY"),":0.0") ==0 ) {
+  if( strcmp(getenv("DISPLAY"),":0.0") ==0 ) {
       strcpy(buf,"Xorg");
       if(HangupXserver(buf)== 0) {
         strcpy(buf,"X");
         HangupXserver(buf);
       }
-    }
   }
   
   return 1;
