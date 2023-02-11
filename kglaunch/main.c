@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <libgen.h>
 #include<string.h>
+#include<signal.h>
 void *Runkglaunch(void *);
 
 int CheckProcessDisplay(char *curdsp,int pid) {
@@ -76,11 +78,12 @@ int KillOtherJobs(char *name) {
    return Id;
 }
 int main(int argc,char **argv) {  
+  void *Ret;
   if( getenv("HOME") != NULL) chdir(getenv("HOME"));
   KillOtherJobs(basename(argv[0]));
   if(argc > 1){
    if (strcmp(argv[1],"-d") ==0 ) daemon(0,0);
   }
-  Runkglaunch(NULL);
+  Ret = Runkglaunch(NULL);
   return 1;
 }

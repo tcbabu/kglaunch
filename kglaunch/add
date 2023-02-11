@@ -1,0 +1,12 @@
+  switch(IconShape) {
+    default:
+     case 1:
+       rfac = 0.2;
+     break;
+     case 2:
+       rfac = 0.5;
+     break;
+     case 3:
+       rfac = 0.0;
+     break;
+  }

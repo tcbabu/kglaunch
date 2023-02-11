@@ -1,0 +1,6 @@
+20/05/2016
+A mistake was there in the default configuration file, which
+was refering to  '/usr/share/icons/red_light.png' (which was
+available in my system, but may not be there in other systems).
+This is fixed. Also demonised 'kglaunch' (which was suppressed
+for debuging).

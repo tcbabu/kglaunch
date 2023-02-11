@@ -4,11 +4,11 @@ CC	=cc -pthread
 all	:kglaunch kglogout configlauncher 
 kglaunch	: kglaunch.o kglaunchCallbacks.o main.o additem.o \
  	 additemCallbacks.o edititem.o edititemCallbacks.o  \
-	 import.o importCallbacks.o
+	 import.o importCallbacks.o 
 	 $(CC) -o kglaunch kglaunch.o kglaunchCallbacks.o main.o \
 	 additem.o additemCallbacks.o \
 	 edititem.o edititemCallbacks.o \
-	 import.o importCallbacks.o \
+	 import.o importCallbacks.o  \
 	 -I$(KULINA)/include $(KULINA)/lib/libkulina.a $(KULINA)/lib/libgm.a -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread  
 kglaunch.o	: kglaunch.c 
 	 $(CC) -c kglaunch.c

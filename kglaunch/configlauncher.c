@@ -1,4 +1,5 @@
-#include "kulina.h"
+#include <sys/stat.h>
+#include <kulina.h>
 #include "configlauncherCallbacks.h"
 int Bred=190,Bgreen=200,Bblue=190;
 int Btred=190,Btgreen=200,Btblue=190;
@@ -7,7 +8,7 @@ int Align=5,IconShape=0;
 int Color,Font=8,Red=230,Green=240,Blue=230,Nx=5,Ny=3,Xgap=40,Ygap=50,Bsize=72;
 int Bcolor;
 int Btcolor;
-char ConfigFile[100];
+char ConfigFile[500];
 void ModifyconfiglauncherGc(Gclr *gc) {
 /*
 //  You may change default settings here 
@@ -558,7 +559,7 @@ void *Runconfiglauncher(void *arg) {
    int   v8 = 1;
    void* v[9];
    int ret;
-   ReadConfig();
+   ret = ReadConfig();
    Font =Font+1;
    v7 = Transparency;
    v[0]=(void *)(&Font);
@@ -584,9 +585,13 @@ void *Runconfiglauncher(void *arg) {
      Transparency = v7;
      Align = v6;
      IconShape = v8-1;
-     WriteConfig();
+     ret = WriteConfig();
    }
    return NULL;
 }
 void *Runconfiglauncher(void *);
-int main(void) { Runconfiglauncher(NULL);return 1;}
+int main(void) { 
+	void *Ret;
+	Ret = Runconfiglauncher(NULL);
+	return 1;
+}

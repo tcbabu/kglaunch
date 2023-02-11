@@ -1,5 +1,5 @@
 #include <fcntl.h>
-#include "kulina.h"
+#include <kulina.h>
 #include "headers.h"
 extern int Xm,Ym;
 extern int Nx,Ny,Bsize,Xgap,Ygap,Nb,Xl,Yl;
@@ -179,10 +179,11 @@ int  kglaunchbutton1callback(int butno,int i,void *Tmp) {
   if((e.event==1)||(e.event==2)) {
     if(e.button!= 1) {
       Item=butno;
-      if(ret=Runadditem(D,e.x,e.y,D->xl,D->yl)){
+      if((ret=Runadditem(D,e.x,e.y,D->xl,D->yl))==1){
        Restart=0;
       }
       Item=-1;
+      printf("Restart = %d\n",Restart);
       return ret;
     }
   }
@@ -235,7 +236,7 @@ int kglaunchCallBack(void *Tmp,void *tmp) {
     Tmp :  Pointer to DIALOG  
     tmp :  Pointer to KBEVENT  
    ***********************************/ 
-  int ret = 0;
+  int ret = 0,val;
   DIALOG *D;
   KBEVENT *kbe;
   D = (DIALOG *)Tmp;
@@ -243,7 +244,7 @@ int kglaunchCallBack(void *Tmp,void *tmp) {
   kbe = (KBEVENT *)tmp;
   if(kbe->event ==1) {
     if(kbe->button >1) {
-      if(Runadditem(D,kbe->x,kbe->y,D->xl,D->yl)){
+      if((val=Runadditem(D,kbe->x,kbe->y,D->xl,D->yl))==1){
         Restart =0;
         kgSetExit(D);
       }

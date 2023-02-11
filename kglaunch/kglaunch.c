@@ -1,5 +1,6 @@
-#include "kulina.h"
+#include <kulina.h>
 #include "headers.h"
+#include <sys/stat.h>
 #include "kglaunchCallbacks.h"
 #include "images.c"
 int Restart=1;
@@ -498,12 +499,13 @@ void *Runkglaunch(void *arg) {
 
 *************************************************/
    int pid;
+   int ret;
    void **v=NULL;
    void *pt=NULL; /* pointer to send any extra information */
    kgDisplaySize(&Xres,&Yres); 
     while(Restart) {
-        ReadConfig();
-        kglaunch(NULL,v,pt );
+        ret = ReadConfig();
+        ret = kglaunch(NULL,v,pt );
     }
    return NULL;
 }

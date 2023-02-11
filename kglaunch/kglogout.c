@@ -7,7 +7,7 @@
 #include <kulina.h>
 int killxvnc(char *env) {
   FILE *pf;
-  char buff[200],dummy[50],sock[100];
+  char buff[500],dummy[50],sock[100];
   int ret=0,pid;
   int display,mydsp;
   char *pt;
@@ -18,34 +18,37 @@ int killxvnc(char *env) {
   pt[0]=' ';
   sscanf(buff,"%d",&mydsp);
   pf = popen("ps -ef","r");
-  while( fgets(buff,199,pf) != NULL) {
+  while( fgets(buff,499,pf) != NULL) {
      if(strstr(buff,"Xvnc") == NULL ) continue;
-     pt = strstr(buff,"unixpath=");
-     if(pt == NULL ) continue;
-     pt += 9;
-//     printf("%s\n",pt);
-//     printf("%s\n",sock);
+     pt = strstr(buff,"/tmp/RxD");
      if(pt == NULL ) continue;
      sscanf(pt,"%s",sock);
      sscanf(buff,"%s%d",dummy,&pid);
      
-     pt = strchr(sock,'.');
-     strncpy(dummy,pt+1,40);
-     pt = strchr(dummy,'.');
+     pt = strstr(sock,".");
+     if(pt == NULL ) continue;
+     strcpy(dummy,pt+1);
+     pt = strstr(dummy,".");
+     if(pt == NULL ) continue;
      pt[0]= ' ';
-     sscanf(dummy,"%d",&display);
+     pt = strstr(dummy,".");
+     if(pt == NULL ) continue;
+     pt[0]= ' ';
+     sscanf(dummy,"%d%d",&display,&pid);
      if(mydsp==display) {
+      kill(pid,SIGHUP);
       if(kill(pid,9)) { 
         sprintf(dummy,"/tmp/X%-d-lock",display);
         remove(dummy);
-        sprintf(dummy,"/tmp/X11d-unix/X%-d",display);
+        sprintf(dummy,"/tmp/X11-unix/X%-d",display);
         remove(dummy);
         strcpy(dummy,sock);
+        remove(dummy);
         dummy[5]='.';dummy[6]='L';dummy[7]='K';
         remove(dummy);
+        ret=1;
       }
      }
-     ret=1;
   }
   return ret;
 }
@@ -170,11 +173,17 @@ int CheckProcess(char *procname) {
 }
 int main(int argc,char **argv) {  
   char buf[200],*env=NULL;
+  int cid,status;
+  if( kgCheckMenu(NULL,100,200,"Kill/Logout the Session",0)==0) return 0; 
+ 
   env = getenv("DISPLAY"); 
   if( strcmp(env,":0.0") !=0 ) {
     killxvnc(env);
+    exit(0);
   }
-  if(SearchString(argv[0],"kglogout")>=0) {
+#if 1
+  if((cid=fork())==0) {
+//  if(SearchString(argv[0],"kglogout")>=0) {
     if(CheckProcess("startkde")) {
        changejob("kdeinit4_shutdown");
     }
@@ -187,8 +196,12 @@ int main(int argc,char **argv) {
     if(CheckProcess("xfce4-session")) {
        changejob("xfce4-session-logout");
     }
-    changejob("kgLogout");
+//    changejob("kgLogout");
+//  }
+    exit(0);
   }
+  waitpid(cid,&status,0);
+#endif
   if( strcmp(getenv("DISPLAY"),":0.0") ==0 ) {
       strcpy(buf,"Xorg");
       if(HangupXserver(buf)== 0) {

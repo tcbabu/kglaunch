@@ -1,4 +1,4 @@
-#include "kulina.h"
+#include <kulina.h>
 extern int Color,Font,Red,Green,Blue,Nx,Ny,Xgap,Ygap,Bsize;
 extern int Bred,Bgreen,Bblue;
 extern int Btred,Btgreen,Btblue;

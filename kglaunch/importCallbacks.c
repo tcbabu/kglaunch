@@ -1,5 +1,6 @@
-#include "kulina.h"
+#include <kulina.h>
 #include "headers.h"
+void WriteRecords(void);
 extern Dlink *Blist;
 static Dlink *Dlist=NULL;
 extern int Restart;

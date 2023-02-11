@@ -1,4 +1,4 @@
-#include "kulina.h"
+#include <kulina.h>
 #include "additemCallbacks.h"
 DIALOG *Parent;
 
@@ -172,6 +172,7 @@ int Runadditem(void *arg,int x1,int y1,int l,int h) {
     Selectmenu1  1 data value
 
 *************************************************/
+   int ret;	
    int   v0 = 1;
    void* v[1];
    int Pxl,Pyl;
@@ -184,7 +185,7 @@ int Runadditem(void *arg,int x1,int y1,int l,int h) {
    void *pt=NULL; /* pointer to send any extra information */
    Pxl = Parent->xl;
    Pyl = Parent->yl;
-   if( (Pxl < 150)||(Pyl<220)) additem(NULL,v,pt);
-   else additem(arg,v,pt );
+   if( (Pxl < 150)||(Pyl<220)) ret = additem(NULL,v,pt);
+   else ret = additem(arg,v,pt );
    return Exit;
 }

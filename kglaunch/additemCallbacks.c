@@ -10,6 +10,7 @@ void WriteRecords(void);
 void *Runedititem(void *);
 void *Runimport(void *arg);
 extern int Exit;
+int runjob(char *job,int (*ProcessOut)(int,int,int));
 int  additembrowser1callback(int item,int i,void *Tmp) {
   /*********************************** 
     item : selected item (1 to max_item) 
@@ -17,19 +18,21 @@ int  additembrowser1callback(int item,int i,void *Tmp) {
     Tmp :  Pointer to DIALOG  
    ***********************************/ 
   DIALOG *D;DIX *X;void *pt; 
-  int ret=1; 
+  int ret=1,retval; 
+  void *Ret;
   BUTACTION *bt=NULL;
   D = (DIALOG *)Tmp;
   pt = D->pt;
   X = (DIX *)kgGetWidget(Tmp,i);
   switch(item) {
     case 1:
-      system("configlauncher");
+      retval = system("configlauncher");
+//      retval = runjob("configlauncher",NULL);
       Restart=1;
-      kgSetExit(Parent);
+      retval = kgSetExit(Parent);
       break;
     case 2: 
-      Runimport(Tmp);
+      Ret = Runimport(Tmp);
       break;
     case 3: 
       bt = (BUTACTION *) malloc(sizeof(BUTACTION));
