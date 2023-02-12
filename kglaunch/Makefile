@@ -9,7 +9,8 @@ kglaunch	: kglaunch.o kglaunchCallbacks.o main.o additem.o \
 	 additem.o additemCallbacks.o \
 	 edititem.o edititemCallbacks.o \
 	 import.o importCallbacks.o  \
-	 -I$(KULINA)/include $(KULINA)/lib/libkulina.a $(KULINA)/lib/libgm.a -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread  
+	 -lkulina -lgm -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread  
+	 cp  kglaunch $(KULINA)/TARBALL/
 kglaunch.o	: kglaunch.c 
 	 $(CC) -c kglaunch.c
 kglaunchCallbacks.o	: kglaunchCallbacks.c 
@@ -21,15 +22,18 @@ importCallbacks.o	: importCallbacks.c
 main.o	: main.c 
 	 $(CC) -c main.c
 configlauncher	: configlauncher.o configlauncherCallbacks.o main.o
-	 $(CC) -o configlauncher configlauncher.o configlauncherCallbacks.o  -I$(KULINA)/include $(KULINA)/lib/libkulina.a $(KULINA)/lib/libgm.a -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread -lz 
+	 $(CC) -o configlauncher configlauncher.o configlauncherCallbacks.o  -lkulina -lgm -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread -lz 
+	 cp  configlauncher $(KULINA)/TARBALL/
 configlauncher.o	: configlauncher.c 
 	 $(CC) -c configlauncher.c
 configlauncherCallbacks.o	: configlauncherCallbacks.c 
 	 $(CC) -c configlauncherCallbacks.c
 kglogout	: kglogout.c
-		 cc -okglogout kglogout.c -I$(KULINA)/include $(KULINA)/lib/libkulina.a $(KULINA)/lib/libgm.a -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread
+		 cc -o kglogout kglogout.c -lkulina -lgm -L/usr/X11R6/lib -lX11 -lXext -lm -lpthread
+	 cp  kglogout  $(KULINA)/TARBALL/
 clean	:  
 	   rm -f *.o kglaunch kglogout configlauncher
+	   rm -f $(KULINA)/TARBALL/kglaunch $(KULINA)/TARBALL/kglogout $(KULINA)/TARBALL/configlauncher
 install	: kglaunch kglogout configlauncher
 	 install -m 755 -s kglaunch $(PREFIX)/bin
 	 install -m 755 -s configlauncher $(PREFIX)/bin

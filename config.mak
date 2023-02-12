@@ -1,2 +1,2 @@
-KULINA=/usr
+KULINA=$(PWD)
 PREFIX=/usr

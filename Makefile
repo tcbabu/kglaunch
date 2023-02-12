@@ -1,18 +1,25 @@
-include config.mak
 HFILES = $(foreach part, hotspot, $(wildcard $(addprefix $(part)/,*.[ch])))
 LFILES = $(foreach part, kglaunch, $(wildcard $(addprefix $(part)/,*.[ch])))
 all	: hotspot/hotspot kglaunch/kglaunch 
 
 hotspot/hotspot : $(HFILES)
-		 cp config.mak hotspot/
+		 echo "PREFIX=/usr" > hotspot/config.mak
+		 echo "KULINA=$(PWD)" >> hotspot/config.mak
 		 make -C hotspot
 kglaunch/kglaunch : $(LFILES)
-		 cp config.mak kglaunch/
+		 echo "PREFIX=/usr" > kglaunch/config.mak
+		 echo "KULINA=$(PWD)" >> kglaunch/config.mak
 		 make -C kglaunch
+
+tarball	: TARBALL/kglaunch TARBALL/hotspot
+	 mv TARBALL kglaunch-1.1
+	 tar czf kglaunch-1.1.tgz kglaunch-1.1
+	 mv kglaunch-1.1 TARBALL
 
 clean	:
 	 make -C hotspot clean
 	 make -C kglaunch clean
+	 rm -f kglaunch-1.1.tgz
 install	: hotspot/hotspot kglaunch/kglaunch
 	  make -C hotspot install
 	  make -C kglaunch install
