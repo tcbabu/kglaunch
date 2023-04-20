@@ -6,6 +6,73 @@ static Dlink *Dlist=NULL;
 extern int Restart;
 extern DIALOG *Parent;
 void *MakeButList(Dlink *Blist);
+static int compdup(void *pt1,void *pt2);
+static int comppath(void *pt1,void *pt2);
+char *myWhich(char *pgr) {
+/* Caller must free result if it is not NULL */
+  int i=0,j,End=0;
+  char *pt,**m,*res=NULL,*cpt;
+  char path[5000];
+  Dlink *L;
+  if(pgr[0]=='/') { // full path is given
+    int l;
+    char **m,*pt1;
+    strcpy(path,pgr);
+    pt=path;
+    l = strlen(pt);
+    while(pt[l]!='/') l--;
+    if(l==0) {
+     m = kgFileMenu("/",pt+1);
+    }
+    else {
+     pt1=pt+l+1;
+     pt[l]='\0';
+     m = kgFileMenu(pt,pt1);
+    }
+    if( (m==NULL)) {return NULL;}
+    if( (m[0]==NULL)) {kgFreeDouble((void **)m);return NULL;}
+    kgFreeDouble((void **)m);
+    res = (char *)malloc(strlen(pgr)+1);
+    strcpy(res,pgr);
+    return res;
+  }
+
+  pt = getenv("PATH");
+  if(pt==NULL) return NULL;
+  strcpy(path , getenv("PATH"));
+  L = Dopen();
+  while(!End) {
+    j=i;
+    if(pt[j]< ' ') break;
+    while(path[j]!=':') {
+      if(path[j]<' ') {End=1;break;}
+      j++;
+    }
+    path[j]='\0';
+    cpt = (char *)malloc(strlen(path+i)+1);
+    strcpy(cpt,path+i);
+    Dadd(L,cpt);
+    i=j+1;
+  }
+  Dsort(L,comppath);
+  Drmvdup_cond(L,compdup);
+  Resetlink(L);
+  while( (pt = (char *)Getrecord(L))!=NULL) {
+    m = kgFileMenu(pt,pgr);
+    if(m==NULL) continue;
+    if(m[0]==NULL) { free(m);continue;}
+    res = (char *)malloc(strlen(pt)+1+strlen(m[0])+1);
+    strcpy(res,pt);
+    strcat(res,"/");
+    strcat(res,m[0]);
+    i=0;
+    while(m[i]!=NULL) {free(m[i]);i++;}
+    free(m);
+    break;
+  }
+  Dempty(L);
+  return res;
+}
 int  importbrowser1callback(int item,int i,void *Tmp) {
   DIALOG *D;DIY *Y;void *pt; 
   /*********************************** 
@@ -72,7 +139,7 @@ void *MakeButList(Dlink *Blist) {
     strcat(Icon,bt->Icon);
     i = strlen(bt->Command);
     while((i>=0)&&(bt->Command[i]<=' ')) bt->Command[i--]='\0';
-    if(i< 0) bt->Command[i]='\0';
+// TCB    if(i< 0) bt->Command[i]='\0';
     i=k;
     k++;
     th[i]=(ThumbNail *)malloc(sizeof(ThumbNail));
@@ -228,7 +295,94 @@ char *uiSearchFolder(char *Folder,char *Icon) {
   Dempty(L);
   return res;
 }
-char *kgWhichIcon(char *pgr,char *theme) {
+char *kgWhichIcon(char *icon,char *theme) {
+/* Caller must free result if it is not NULL */
+  int i=0,j,k=0,End=0;
+  char *pt,**m,*res=NULL,*cpt,**m1,**m2;
+  char buff[500];
+  char buff1[500];
+  char buff2[500];
+  char path[5000];
+  Dlink *L;
+#if 1
+  res =(char *)malloc(50);
+  strcpy(res,"/usr/share/icons/default.png");
+  return res;
+#endif
+  if(icon[0]=='/') {
+    int l;
+    char **m,*pt1;
+    strcpy(path,icon);
+    pt=path;
+    l = strlen(pt);
+    while(pt[l]!='/') l--;
+    if(l==0) {
+     m = kgFileMenu("/",pt+1);
+    }
+    else {
+     pt1=pt+l+1;
+     pt[l]='\0';
+     m = kgFileMenu(pt,pt1);
+    }
+    if( (m==NULL)) {
+	    return NULL;
+    }
+    if( (m[0]==NULL)) {
+	    kgFreeDouble((void **)m);
+	    return NULL;
+    }
+    kgFreeDouble((void **)m);
+    res = (char *)malloc(strlen(icon)+1);
+    strcpy(res,icon);
+    return res;
+  } 
+#if 0
+  pt = getenv("XDG_DATA_DIRS");
+  if(pt==NULL) strcpy(path,"/usr/share");
+  else strcpy(path , getenv("XDG_DATA_DIRS"));
+#else
+  strcpy(path,"/usr/share");
+#endif
+  L = Dopen();
+  while(!End) {
+    j=i;
+    if(pt[j]< ' ') break;
+    while(path[j]!=':') {
+      if(path[j]<' ') {End=1;break;}
+      j++;
+    }
+    path[j]='\0';
+    cpt = (char *)malloc(strlen(path+i)+1);
+    strcpy(cpt,path+i);
+    Dadd(L,cpt);
+    i=j+1;
+  }
+  Dsort(L,comppath);
+  Drmvdup_cond(L,compdup);
+  Resetlink(L);
+  while( (pt = (char *)Getrecord(L))!=NULL) {
+    strcpy(buff,pt);
+    strcat(buff,"/");
+    strcat(buff,"icons");
+    m = kgFolderMenu(buff);
+    if(m==NULL) continue;
+    if(m[0]==NULL) { kgFreeDouble((void **)m);continue;}
+    i=0;
+    while(m[i]!= NULL){
+//      printf("THEME: %s : %s\n",m[i],theme);
+      if(SearchString(m[i],theme)< 0) {i++;continue;}
+      strcpy(buff1,buff);
+      strcat(buff1,"/");
+      strcat(buff1,m[i]);
+      res  = uiSearchFolder(buff1,icon);
+      if(res != NULL) break;
+      i++;
+    }
+  }
+  Dempty(L);
+  return res;
+}
+char *kgWhichIcon_org(char *pgr,char *theme) {
 /* Caller must free result if it is not NULL */
   int i=0,j,k=0,End=0;
   char *pt,**m,*res=NULL,*cpt,**m1,**m2;
@@ -410,26 +564,136 @@ char *kgWhichIcon_o(char *pgr,char *theme) {
   Dempty(L);
   return res;
 }
+static int ProcessIconName(char *Icon){
+  int pos;
+  char *pt;
+  if(SearchString(Icon,".png")>= 0) return 1;
+  if((pos=SearchString(Icon,".svg"))>= 0)  {
+	  pt= Icon+pos;
+	  strcpy(pt,".png");
+	  return 1;
+  }
+  pos=SearchString(Icon,"org.");
+  if(pos >= 0) {
+    pt= Icon+pos+4;
+    while((pos=SearchString(pt,"."))>=0){
+      pt +=pos+1;
+    }
+    strcpy(Icon,pt);
+    strcat(Icon,".png");
+    return 1;
+  }
+  strcat(Icon,".png");
+  return 1;
+}
 void *SearchIcon(void *Btmp) {
   BUTACTION *bt;
+  char Icon[200];
   char *pt,*res=NULL;
   bt = (BUTACTION *)Btmp;
-  pt = bt->Icon;
-  res = kgWhichIcon(pt,"oxygen");
-  if(res==NULL) res = kgWhichIcon(pt,"Oxygen");
-  if(res==NULL) res = kgWhichIcon(pt,"KDE");
-  if(res==NULL) res = kgWhichIcon(pt,"gnome");
-  if(res==NULL) res = kgWhichIcon(pt,"CratOS");
-  if(res==NULL) res = kgWhichIcon(pt,"hicolor");
+  strcpy(Icon,bt->Icon);
+//  printf("Icon string: %s\n",Icon);
+  ProcessIconName(Icon);
+//  printf("Icon Name: %s\n",Icon);
+  if(SearchString(Icon,".png")< 0) {
+	  strcpy(bt->Icon,"/usr/share/icons/default.png");
+	  return Btmp;
+  }
+  pt = Icon;
+#if 1
+  res = kgSearchIcon(pt);
+  if(res== NULL) strcpy(bt->Icon,"/usr/share/icons/default.png");
+  else { strcpy(bt->Icon,res);free(res);}
+//  printf("Got Icon: %s :\n\n\n",bt->Icon);
+#else
+  res = kgWhichIcon(pt,"icons");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/oxygen");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/elementary-xfce");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/Oxygen");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/KDE");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/gnome");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/CratOS");
+  if(res==NULL) res = kgWhichIcon(pt,"icons/hicolor");
   if(res!= NULL) {
 //                  printf("res: %s : %s\n",pt,res);
                    strcpy(bt->Icon,res);
                    free(res);
                  }
                  else {
+                   strcpy(bt->Icon,"/usr/share/icons/default.png");
                    bt->Icon[0]='\0';
                  }
+#endif
   return Btmp;
+}
+static char *GetExec(char *file,char *Token) {
+  char* res=NULL;
+  char buff[500],tmp[100];
+  FILE *fp;
+  int i,l;
+  fp = fopen(file,"r");
+  if(fp == NULL) {
+       return NULL;
+  }
+  l = strlen(Token);
+  while (fgets(buff,499,fp) != NULL) {
+         if(SearchString(buff,"[") >= 0)  continue;
+         i=0;
+	 while((buff[i]>= ' ')||(buff[i]=='\t')) i++;
+	 while(buff[i]<= ' ') {buff[i]='\0';i--;}
+	 i=0;
+	 while (buff[i]==' ')i++;
+	 if( strncmp(buff+i,Token,l) == 0) {
+		 i +=l;
+		 while (buff[i]!= '=') i++;
+		 i++;
+		 while (buff[i]== ' ') i++;
+		 if(buff[i] < ' ') {fclose(fp); return NULL;}
+		 sscanf(buff+i,"%s",tmp);
+		 if( (res=kgWhich(tmp)) == NULL) return NULL;
+		 free(res);
+		 res = (char *)malloc(strlen(buff+i)+1);
+		 strcpy(res,buff+i);
+	         fclose(fp);
+	         return (res);	 
+	 }
+  }
+  fclose(fp);
+  return NULL;
+
+}
+static char *GetString(char *file,char *Token) {
+  char* res=NULL;
+  char buff[500];
+  FILE *fp;
+  int i,l;
+  fp = fopen(file,"r");
+  if(fp == NULL) {
+       return NULL;
+  }
+  l = strlen(Token);
+  while (fgets(buff,499,fp) != NULL) {
+         if(SearchString(buff,"[") >= 0)  continue;
+         i=0;
+	 while((buff[i]>= ' ')||(buff[i]=='\t')) i++;
+	 while(buff[i]<= ' ') {buff[i]='\0';i--;}
+	 i=0;
+	 while (buff[i]==' ')i++;
+	 if( strncmp(buff+i,Token,l) == 0) {
+		 i +=l;
+		 while (buff[i]!= '=') i++;
+		 i++;
+		 while (buff[i]== ' ') i++;
+		 if(buff[i] < ' ') {fclose(fp); return NULL;}
+		 res = (char *)malloc(strlen(buff+i)+1);
+		 strcpy(res,buff+i);
+	         fclose(fp);
+	         return (res);	 
+	 }
+  }
+  fclose(fp);
+  return NULL;
+
 }
 void *MakeDesktopList(void) {
   int i,pos,SKIP,l;
@@ -451,93 +715,33 @@ void *MakeDesktopList(void) {
       while(m[i]!= NULL) {
         strcpy(buff,"/usr/share/applications/");
         strcat(buff,m[i]);
-        fp = fopen(buff,"r");
-        if(fp == NULL) {
-          printf("Failed: |%s|\n",m[i]);
-        }
-        i++;
-        if(fp != NULL) {
-          SKIP=1;
-          Btmp.Icon[0]='\0';
-          while (fgets(buff,499,fp) != NULL) {
-            if(SearchString(buff,"Name[") >= 0) continue;
-            if(SearchString(buff,"Generic") >= 0) continue;
-            if(SearchString(buff,"TryExec") >= 0) continue;
-            if(SearchString(buff,"Exec") >= 0) {
-              SKIP=0;
-              if((pos=SearchString(buff,"=")) >=0) {
-                 pt = buff+pos+1;
-                 while( *pt == ' ') pt++;
-                 l = strlen(pt);
-                 while((l>0)&&(pt[l]<' ')) {pt[l]='\0';l--;}
-                 if((pt[0]!='/')) {
-                    if((res=kgWhich(pt))==NULL) {SKIP=1;break;}
-                    free(res);
-                 }
-                 else {
-                   char **m,*pt1;
-                   l = strlen(pt);
-                   while(pt[l]!='/') l--;
-                   if(l==0) {
-                    m = kgFileMenu("/",pt+1);
-                   }
-                   else {
-                    pt1=pt+l+1;
-                    pt[l]='\0';
-                    m = kgFileMenu(pt,pt1);
-                    pt[l]='/';
-                   }
-                   if( (m==NULL)) {SKIP=1;break;}
-                   if( (m[0]==NULL)) {kgFreeDouble((void **)m);SKIP=1;break;}
-                   kgFreeDouble((void **)m);
-                 }
-//                 strcpy(Btmp.Command,pt);
-                 sscanf(pt,"%s",Btmp.Command);
-              }
-            }
-            if(SearchString(buff,"Name") >= 0) {
-              if((pos=SearchString(buff,"=")) >=0) {
-                 pt = buff+pos+1;
-                 while( *pt == ' ') pt++;
-                 l = strlen(pt);
-                 while((l>0)&&(pt[l]<' ')) {pt[l]='\0';l--;}
-                 strcpy(Btmp.Name,pt);
-              }
-            }
-            if(SearchString(buff,"Icon") >= 0) {
-              if((pos=SearchString(buff,"=")) >=0) {
-                 char *res=NULL;
-                 pt = buff+pos+1;
-                 while( *pt == ' ') pt++;
-                 l = strlen(pt);
-                 while((l>0)&&(pt[l]<=' ')) {pt[l]='\0';l--;}
-                 strcpy(Btmp.Icon,pt);
-              }
-            }
-          } // fgets
-          fclose(fp);
-          if(Btmp.Icon[0]=='\0') SKIP=1;
-          if(!SKIP) { // add item
-            bt = (BUTACTION *) malloc(sizeof(BUTACTION));
-            strcpy(bt->Command,Btmp.Command);
-            strcpy(bt->Icon,Btmp.Icon);
-            strcpy(bt->Name,Btmp.Name);
-            Dadd(Dlist,bt);
-//            printf("Searching : %s\n",bt->Icon);
-            DoInAnyThread(Thid,SearchIcon,bt);
-//            SearchIcon(bt);
-          }
-        }
+	i++;
+	res = GetExec(buff,"Exec");
+	if(res==NULL) {
+//		printf("res==NULL\n");
+		continue;
+	}
+	strcpy(Btmp.Command,res);
+	free(res);
+        strcpy(Btmp.Name," ");
+	res = GetString(buff,"Name");
+	if(res != NULL) {strcpy(Btmp.Name,res); free(res);}
+        strcpy( Btmp.Icon,"/usr/share/icons/default.png");
+	res = GetString(buff,"Icon");
+	if(res != NULL) {strcpy(Btmp.Icon,res); free(res);}
+        bt = (BUTACTION *) malloc(sizeof(BUTACTION));
+        strcpy(bt->Command,Btmp.Command);
+        strcpy(bt->Icon,Btmp.Icon);
+        strcpy(bt->Name,Btmp.Name);
+        Dadd(Dlist,bt);
+//      printf("Searching : %s\n",bt->Icon);
+        DoInAnyThread(Thid,SearchIcon,bt);
+//        SearchIcon(bt);
       } //while
     }
   }  
   WaitThreads(Thid);
   CloseThreads(Thid);
-  Resetlink(Dlist);
-  while ( (bt=(BUTACTION *)Getrecord(Dlist))!= NULL) {
-    if(bt->Icon[0] != '\0') continue;
-    else {Dmove_back(Dlist,1); Ddelete(Dlist);}
-  }
   return MakeButList(Dlist);
 }
 void  importbrowser2init(DIY *Y,void *pt) {
