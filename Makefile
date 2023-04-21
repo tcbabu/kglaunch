@@ -31,6 +31,7 @@ install	: hotspot/hotspot kglaunch/kglaunch
 	install -m 644  kglogout.png /usr/share/kglaunch/kglogout.png
 	install -m 644  kglogout.png /usr/share/icons/red_light.png
 	install -m 644  hotspot.png /usr/share/kglaunch/hotspot.png
+	install -m 644  default.png /usr/share/kglaunch/default.png
 	install -m 644  kglaunch.desktop /usr/share/applications
 	install -m 644  kglogout.desktop /usr/share/applications
 	install -m 644  hotspot.desktop /usr/share/applications

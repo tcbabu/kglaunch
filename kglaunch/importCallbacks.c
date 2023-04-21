@@ -564,8 +564,8 @@ char *kgWhichIcon_o(char *pgr,char *theme) {
   Dempty(L);
   return res;
 }
-static int ProcessIconName(char *Icon){
-  int pos;
+static int uiProcessIconName_o(char *Icon){
+  int pos,count=0;
   char *pt;
   if(SearchString(Icon,".png")>= 0) return 1;
   if((pos=SearchString(Icon,".svg"))>= 0)  {
@@ -573,17 +573,19 @@ static int ProcessIconName(char *Icon){
 	  strcpy(pt,".png");
 	  return 1;
   }
-  pos=SearchString(Icon,"org.");
-  if(pos >= 0) {
-    pt= Icon+pos+4;
+  count =0;
+  pt=Icon;
+  while((pt=strstr(pt,"."))!= NULL) {count++;pt++;}
+  if(count>1) {
+    pt = strstr(Icon,".")+1;
     while((pos=SearchString(pt,"."))>=0){
       pt +=pos+1;
     }
     strcpy(Icon,pt);
-    strcat(Icon,".png");
+//    strcat(Icon,".png");
     return 1;
   }
-  strcat(Icon,".png");
+//  strcat(Icon,".png");
   return 1;
 }
 void *SearchIcon(void *Btmp) {
@@ -593,12 +595,14 @@ void *SearchIcon(void *Btmp) {
   bt = (BUTACTION *)Btmp;
   strcpy(Icon,bt->Icon);
 //  printf("Icon string: %s\n",Icon);
-  ProcessIconName(Icon);
+//  uiProcessIconName(Icon);
 //  printf("Icon Name: %s\n",Icon);
+#if 0
   if(SearchString(Icon,".png")< 0) {
 	  strcpy(bt->Icon,"/usr/share/icons/default.png");
 	  return Btmp;
   }
+#endif
   pt = Icon;
 #if 1
   res = kgSearchIcon(pt);
