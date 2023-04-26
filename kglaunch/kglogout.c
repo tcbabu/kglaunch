@@ -151,6 +151,29 @@ int HangupXserver(char *name) {
    }
    return Id;
 }
+static int killX(void) {
+  FILE *pf;
+  char buff[500],dummy[50],sock[100];
+  int ret=0,pid;
+  int display,mydsp;
+  char *pt;
+  pf = popen("ps -ef","r");
+  while( fgets(buff,499,pf) != NULL) {
+     if(strstr(buff,"X") == NULL ) continue;
+     sscanf(buff,"%s%d",dummy,&pid);
+
+      kill(pid,SIGHUP);
+      if(kill(pid,9)) {
+        sprintf(dummy,"/tmp/X0-lock");
+        remove(dummy);
+        sprintf(dummy,"/tmp/X11-unix/X0");
+        remove(dummy);
+        ret=1;
+     }
+  }
+  return ret;
+}
+
 int CheckProcess(char *procname) {
    char buff[300];
    int Id=0,Okay=0,count=0,ln;
@@ -196,8 +219,12 @@ int main(int argc,char **argv) {
     if(CheckProcess("xfce4-session")) {
        changejob("xfce4-session-logout");
     }
+#if 1
+    else if(CheckProcess("xfdesktop")) {
+      system("killall -9 xfdesktop");
 //    changejob("kgLogout");
-//  }
+    }
+#endif
     exit(0);
   }
   waitpid(cid,&status,0);
@@ -209,6 +236,7 @@ int main(int argc,char **argv) {
         HangupXserver(buf);
       }
   }
+  killX();
   
   return 1;
 
